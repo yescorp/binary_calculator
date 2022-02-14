@@ -4,15 +4,15 @@ import 'package:binary_calculator/numeric_systems/BinaryConstants.dart';
 import 'package:binary_calculator/numeric_systems/DecimalNumber.dart';
 import 'package:binary_calculator/numeric_systems/HexNumber.dart';
 import 'package:binary_calculator/numeric_systems/Number.dart';
-import 'package:binary_calculator/numeric_systems/OctalNumber.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
 
-class BinaryNumber extends Number{
+import 'BinaryNumber.dart';
+
+class OctalNumber extends Number{
 
   @override
-  BinaryNumber getNumberFromString(String str){
-    RegExp exp = RegExp(r"[01]*");
+  OctalNumber getNumberFromString(String str){
+    RegExp exp = RegExp(r"[0-7]*");
 
     if(str.contains("+")){
       sign = "+";
@@ -25,9 +25,18 @@ class BinaryNumber extends Number{
 
     if(exp.hasMatch(str)){
       number = str;
+      debugPrint(number);
     }
-
     return this;
+  }
+
+  @override
+  OctalNumber copy(){
+    OctalNumber result = OctalNumber();
+    result.number = number;
+    result.sign = sign;
+    return result;
+
   }
 
   @override
@@ -37,8 +46,8 @@ class BinaryNumber extends Number{
     int decimal = 0;
     int power = 0;
     for(int i = number.length - 1; i >= 0; i--){
-        decimal += (int.parse(number[i]) * pow(2, power)) as int;
-        power++;
+      decimal += (int.parse(number[i]) * pow(8, power)) as int;
+      power++;
     }
 
     if(sign == "-"){
@@ -55,7 +64,9 @@ class BinaryNumber extends Number{
 
   @override
   BinaryNumber toBinary() {
-    return this.copy();
+    DecimalNumber num = DecimalNumber();
+    num = toDecimal();
+    return num.toBinary();
   }
 
   @override
@@ -67,16 +78,6 @@ class BinaryNumber extends Number{
 
   @override
   OctalNumber toOctal() {
-    DecimalNumber num = DecimalNumber();
-    num = toDecimal();
-    return num.toOctal();
-  }
-
-  @override
-  BinaryNumber copy() {
-    BinaryNumber result = BinaryNumber();
-    result.number = number;
-    result.sign = sign;
-    return result;
+    return this.copy();
   }
 }

@@ -1,19 +1,17 @@
 import 'dart:math';
 
-import 'package:binary_calculator/numeric_systems/BinaryConstants.dart';
-import 'package:binary_calculator/numeric_systems/DecimalNumber.dart';
-import 'package:binary_calculator/numeric_systems/HexNumber.dart';
+import 'package:binary_calculator/numeric_systems/BinaryNumber.dart';
 import 'package:binary_calculator/numeric_systems/Number.dart';
 import 'package:binary_calculator/numeric_systems/OctalNumber.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
 
-class BinaryNumber extends Number{
+import 'BinaryConstants.dart';
+import 'DecimalNumber.dart';
+
+class HexNumber extends Number {
 
   @override
-  BinaryNumber getNumberFromString(String str){
-    RegExp exp = RegExp(r"[01]*");
-
+  HexNumber getNumberFromString(String str) {
+    RegExp exp = RegExp(r"[0-9A-Fa-f]*");
     if(str.contains("+")){
       sign = "+";
       str = str.replaceAll(RegExp(r"+"), "");
@@ -24,21 +22,27 @@ class BinaryNumber extends Number{
     }
 
     if(exp.hasMatch(str)){
-      number = str;
+      number = str.toUpperCase();
     }
 
     return this;
   }
 
   @override
-  DecimalNumber toDecimal(){
-    DecimalNumber result = DecimalNumber();
+  BinaryNumber toBinary() {
+    DecimalNumber num = DecimalNumber();
+    num = toDecimal();
+    return num.toBinary();
+  }
 
+  @override
+  DecimalNumber toDecimal() {
+    DecimalNumber result = DecimalNumber();
     int decimal = 0;
     int power = 0;
     for(int i = number.length - 1; i >= 0; i--){
-        decimal += (int.parse(number[i]) * pow(2, power)) as int;
-        power++;
+      decimal += (int.parse(BinaryConstants.value[number[i]]!) * pow(16, power)) as int;
+      power++;
     }
 
     if(sign == "-"){
@@ -54,15 +58,8 @@ class BinaryNumber extends Number{
   }
 
   @override
-  BinaryNumber toBinary() {
-    return this.copy();
-  }
-
-  @override
   HexNumber toHex() {
-    DecimalNumber num = DecimalNumber();
-    num = toDecimal();
-    return num.toHex();
+    return this.copy();
   }
 
   @override
@@ -72,11 +69,13 @@ class BinaryNumber extends Number{
     return num.toOctal();
   }
 
+
   @override
-  BinaryNumber copy() {
-    BinaryNumber result = BinaryNumber();
-    result.number = number;
+  HexNumber copy() {
+    HexNumber result = HexNumber();
     result.sign = sign;
+    result.number = number;
     return result;
   }
+  
 }

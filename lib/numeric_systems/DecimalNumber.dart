@@ -1,20 +1,35 @@
 import 'package:binary_calculator/numeric_systems/BinaryConstants.dart';
+import 'package:binary_calculator/numeric_systems/BinaryNumber.dart';
+import 'package:binary_calculator/numeric_systems/HexNumber.dart';
+import 'package:binary_calculator/numeric_systems/OctalNumber.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'Number.dart';
 
 class DecimalNumber extends Number{
-  int number = 0;
+  int intNumber = 0;
 
   @override
-  void getNumberFromString(String str) {
-    number = int.parse(str);
+  DecimalNumber getNumberFromString(String str) {
+    intNumber = int.parse(str);
+    if(str.contains("+")){
+      sign = "+";
+      str = str.replaceAll(RegExp(r"+"), "");
+    }
+    if (str.contains("-")){
+      sign = "-";
+      str = str.replaceAll(RegExp(r"\-"), "");
+    }
+
+    number = str;
+    return this;
   }
 
   @override
-  String toBinary() {
+  BinaryNumber toBinary() {
     String binary = "";
 
-    int temp = number;
+    int temp = intNumber.abs();
     while(true){
       if(temp / 2 == 0){
         break;
@@ -24,19 +39,23 @@ class DecimalNumber extends Number{
       temp =  (temp / 2).floor();
     }
 
-    return binary.split("").reversed.join();
+    if(sign == "-"){
+      binary += "-";
+    }
+
+    return BinaryNumber().getNumberFromString(binary.split("").reversed.join());
   }
 
   @override
-  int toDecimal() {
-    return number;
+  DecimalNumber toDecimal() {
+    return this.copy();
   }
 
   @override
-  String toHex() {
+  HexNumber toHex() {
     String hex = "";
 
-    int temp = number;
+    int temp = intNumber.abs();
     while(true){
       if(temp / 16 == 0){
         break;
@@ -47,14 +66,18 @@ class DecimalNumber extends Number{
       temp =  (temp / 16).floor();
     }
 
-    return hex.split("").reversed.join();
+    if(intNumber < 0){
+      hex += "-";
+    }
+
+    return HexNumber().getNumberFromString(hex.split("").reversed.join());
   }
 
   @override
-  String toOctal() {
+  OctalNumber toOctal() {
     String octal = "";
 
-    int temp = number;
+    int temp = intNumber.abs();
     while(true){
       if(temp / 8 == 0){
         break;
@@ -65,6 +88,19 @@ class DecimalNumber extends Number{
       temp =  (temp / 8).floor();
     }
 
-    return octal.split("").reversed.join();
+    if(intNumber < 0){
+      octal += "-";
+    }
+
+    return OctalNumber().getNumberFromString(octal.split("").reversed.join());
+  }
+
+  @override
+  DecimalNumber copy() {
+    DecimalNumber result = DecimalNumber();
+    result.intNumber = intNumber;
+    result.number = number;
+    result.sign = sign;
+    return result;
   }
 }
